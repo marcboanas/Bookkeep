@@ -15,10 +15,15 @@ gem 'sprockets'
 gem "bcrypt"
 gem "aws-sdk"
 gem "aescrypt"
+gem "sweet-alert"
+gem 'figaro'
 gem 'rails_12factor', group: :production
 group :development, :test do
   gem 'byebug'
+  gem 'annotate'
   gem 'web-console', '~> 2.0'
   gem 'spring'
+  gem 'factory_girl'
   gem 'rspec-rails'
+  gem 'capybara'
 end

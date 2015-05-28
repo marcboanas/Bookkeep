@@ -11,7 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150520105344) do
+ActiveRecord::Schema.define(version: 20150528134800) do
+
+  create_table "receipts", force: :cascade do |t|
+    t.string   "title"
+    t.string   "image_url"
+    t.integer  "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string   "image_name"
+    t.string   "random_id"
+  end
+
+  add_index "receipts", ["user_id"], name: "index_receipts_on_user_id"
 
   create_table "users", force: :cascade do |t|
     t.string   "email"
@@ -23,8 +35,9 @@ ActiveRecord::Schema.define(version: 20150520105344) do
     t.string   "verification_code"
     t.string   "api_authtoken"
     t.datetime "authtoken_expiry"
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
+    t.boolean  "admin",              default: false
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true

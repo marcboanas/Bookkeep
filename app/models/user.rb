@@ -1,3 +1,22 @@
+# == Schema Information
+#
+# Table name: users
+#
+#  id                 :integer          not null, primary key
+#  email              :string
+#  first_name         :string
+#  last_name          :string
+#  password_hash      :string
+#  password_salt      :string
+#  email_verification :string           default("f")
+#  verification_code  :string
+#  api_authtoken      :string
+#  authtoken_expiry   :datetime
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  admin              :boolean          default(FALSE)
+#
+
 class User < ActiveRecord::Base
   attr_accessor :password, :password_confirmation
   before_save :encrypt_password
@@ -7,6 +26,7 @@ class User < ActiveRecord::Base
   validates :first_name, length: { maximum: 50 }
   validates :password, length: { in: 6..30 }, :on => :create
   validates_confirmation_of :password, if: lambda { |m| m.password.present? }
+  has_many :receipts
 
   def encrypt_password
     if password.present?
@@ -19,16 +39,14 @@ class User < ActiveRecord::Base
     user = self.where("email =?", email).first
 
     if user
-      puts "******************* #{password} 1"
-
+      # puts "******************* #{password} 1"
       begin
         password = AESCrypt.decrypt(password, ENV["API_AUTH_PASSWORD"])
       rescue Exception => e
         password = nil
         puts "error - #{e.message}"
       end
-
-      puts "******************* #{password} 2"
+      # puts "******************* #{password} 2"
 
       if user.password_hash == BCrypt::Engine.hash_secret(password, user.password_salt)
         user
