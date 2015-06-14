@@ -47,7 +47,7 @@ module Api
 
             if user.save
               respond_with user do |format|
-                format.json { render json: @user.to_json, status: :created }
+                format.json { render json: user.to_json, status: :created }
               end
             else
               error_str = ""
