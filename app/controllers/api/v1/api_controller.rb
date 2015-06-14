@@ -31,12 +31,6 @@ module Api
         render :json => {:error => "HTTP Token: Access denied."}, :status => :unauthorized
       end
 
-      def http_authenticate
-        if Rails.env.production?
-          http_basic_authenticate_with name:ENV["API_AUTH_NAME"], password:ENV["API_AUTH_PASSWORD"]
-        end
-      end
-
       def check_for_valid_authtoken
         authenticate_or_request_with_http_token do |token, options|
           @user = User.where(:api_authtoken => token).first

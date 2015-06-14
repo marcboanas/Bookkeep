@@ -1,7 +1,8 @@
 module Api
   module V1
     class UsersController < Api::V1::ApiController
-      before_filter :http_authenticate, :only => [:create] #check api authentication
+      http_basic_authenticate_with name:ENV["API_AUTH_NAME"], password:ENV["API_AUTH_PASSWORD"], :only => [:create], :if => Rails.env.production?
+      # before_filter :http_authenticate, :only => [:create] #check api authentication
       before_filter :check_for_valid_authtoken, :except => [:create] #check logged in?
       before_filter :check_authtoken_expiry, :except => [:create] #login still valid?
 
@@ -87,6 +88,12 @@ module Api
 
       def user_params
         params.require(:user).permit(:first_name, :last_name, :email, :password, :password_confirmation)
+      end
+
+      def http_authenticate
+        if Rails.env.production?
+          http_basic_authenticate_with name:ENV["API_AUTH_NAME"], password:ENV["API_AUTH_PASSWORD"]
+        end
       end
     end
   end
