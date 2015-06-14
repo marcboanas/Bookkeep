@@ -27,28 +27,27 @@ module Api
 
       def create
         if request.post?
-          if params && params[:email] && params[:password]
+          if params && params[:email] && params[:password] && params[:password_confirmation]
             params[:user] = Hash.new
-            params[:user][:first_name] = params[:first_name]
-            params[:user][:last_name] = params[:last_name]
             params[:user][:email] = params[:email]
 
             begin
               decrypted_password = AESCrypt.decrypt(params[:password], ENV["API_AUTH_PASSWORD"])
+              decrypted_password_confirmation = AESCrypt.decrypt(params[:password_confirmation], ENV["API_AUTH_PASSWORD"])
             rescue Exception => e
               decrypted_password = nil
+              decrypted_password_confirmation = nil
             end
 
             params[:user][:password] = decrypted_password
             params[:user][:password_confirmation] = decrypted_password
+            params[:user][:password_confirmation] = decrypted_password_confirmation
             params[:user][:verification_code] = rand_string(20)
 
             user = User.new(user_params)
 
             if user.save
-              respond_with user do |format|
-                format.json { render json: user.to_json, status: :created }
-              end
+              render :json => user.to_json, :status => 200
             else
               error_str = ""
               user.errors.each{|attr, msg|
